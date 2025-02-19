@@ -4,9 +4,10 @@
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-
+#include "Components//STUCharacterMovementComponent.h"
 // Sets default values
-ASTUBaseCharacter::ASTUBaseCharacter()
+ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer)
+    : Super(ObjectInitializer.SetDefaultSubobjectClass<USTUCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
     // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
@@ -41,14 +42,53 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAxis("LookVertical", this, &ASTUBaseCharacter::AddControllerPitchInput);
     PlayerInputComponent->BindAxis("LookHorizontal", this, &ASTUBaseCharacter::AddControllerYawInput);
     PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::Jump);
+    PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASTUBaseCharacter::SprintStart);
+    PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASTUBaseCharacter::SprintStop);
+}
+
+bool ASTUBaseCharacter::IsSprinting() const
+{
+    return WantsToSprint && IsMovingForward && !GetVelocity().IsZero();
+}
+
+float ASTUBaseCharacter::GetMovementDirection() const
+{
+    if (GetVelocity().IsZero())
+    {
+        return 0.0f;
+    }
+
+    const FVector VelocityNormal = GetVelocity().GetSafeNormal();
+    const auto AngleBetween = FMath::Acos(FVector::DotProduct(GetActorForwardVector(), VelocityNormal));
+    const auto CrossProduct = FVector::CrossProduct(GetActorForwardVector(), VelocityNormal);
+    const auto Degrees = FMath::RadiansToDegrees(AngleBetween);
+
+    return CrossProduct.IsZero() ? Degrees : Degrees * FMath::Sign(CrossProduct.Z);
 }
 
 void ASTUBaseCharacter::MoveForward(float Amount)
 {
-    AddMovementInput(GetActorForwardVector(), Amount);
+    if (Amount != 0.0f)
+    {
+        IsMovingForward = true;
+        AddMovementInput(GetActorForwardVector(), Amount);
+    }
 }
 
 void ASTUBaseCharacter::MoveRight(float Amount)
 {
-    AddMovementInput(GetActorRightVector(), Amount);
+    if (Amount != 0.0f)
+    {
+        AddMovementInput(GetActorRightVector(), Amount);
+    }
+}
+
+void ASTUBaseCharacter::SprintStart()
+{
+    WantsToSprint = true;
+}
+
+void ASTUBaseCharacter::SprintStop()
+{
+    WantsToSprint = false;
 }
