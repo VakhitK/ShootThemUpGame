@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Engine/DamageEvents.h"
 #include "Components//STUCharacterMovementComponent.h"
 #include "Components/STUHealthComponent.h"
 #include "Components/TextRenderComponent.h"
@@ -37,23 +38,27 @@ void ASTUBaseCharacter::BeginPlay()
 
     check(HealthComponent);
     check(HealthTextComponent);
+
+    OnHealthChanged(HealthComponent->GetHealth());
+    HealthComponent->OnDeath.AddUObject(this, &ASTUBaseCharacter::OnDeath);
+    HealthComponent->OnHealthChanged.AddUObject(this, &ASTUBaseCharacter::OnHealthChanged);
+
+    LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnGroundLanded);
 }
 
 // Called every frame
 void ASTUBaseCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
-    const auto HealthText = FText::FromString(FString::SanitizeFloat(HealthComponent->GetHealth(), 0));
-    HealthTextComponent->SetText(HealthText);
 }
 
 // Called to bind functionality to input
 void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
+    check(PlayerInputComponent)
 
-    PlayerInputComponent->BindAxis("MoveForward", this, &ASTUBaseCharacter::MoveForward);
+        PlayerInputComponent->BindAxis("MoveForward", this, &ASTUBaseCharacter::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ASTUBaseCharacter::MoveRight);
     PlayerInputComponent->BindAxis("LookVertical", this, &ASTUBaseCharacter::AddControllerPitchInput);
     PlayerInputComponent->BindAxis("LookHorizontal", this, &ASTUBaseCharacter::AddControllerYawInput);
@@ -122,4 +127,43 @@ void ASTUBaseCharacter::SprintStart()
 void ASTUBaseCharacter::SprintStop()
 {
     WantsToSprint = false;
+}
+
+void ASTUBaseCharacter::OnDeath()
+{
+    UE_LOG(BaseCharacterLog, Display, TEXT("Player %s is dead"), *GetName());
+
+    PlayAnimMontage(DeathAnimMontage);
+    GetCharacterMovement()->DisableMovement();
+    // Remove character from scene after 5 seconds
+    SetLifeSpan(LifeSpanOnDeath);
+
+    if (Controller)
+    {
+
+        Controller->ChangeState(NAME_Spectating);
+    }
+}
+
+void ASTUBaseCharacter::OnHealthChanged(float Value) const
+{
+    const auto HealthText = FText::FromString(FString::SanitizeFloat(Value, 0));
+    HealthTextComponent->SetText(HealthText);
+}
+
+void ASTUBaseCharacter::OnGroundLanded(const FHitResult& Hit)
+{
+    const auto FallVelocityZ = -GetVelocity().Z;
+
+    UE_LOG(BaseCharacterLog, Display, TEXT("On landed: %f"), FallVelocityZ);
+
+    if (FallVelocityZ < LandedDamageVelocity.X)
+    {
+        return;
+    }
+
+    const auto Damage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
+    UE_LOG(BaseCharacterLog, Display, TEXT("LandDamage: %f"), Damage);
+
+    TakeDamage(Damage, FDamageEvent{}, nullptr, Hit.GetActor());
 }
