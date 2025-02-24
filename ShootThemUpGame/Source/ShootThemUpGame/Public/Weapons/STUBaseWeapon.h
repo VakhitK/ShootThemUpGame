@@ -9,16 +9,35 @@
 UCLASS()
 class SHOOTTHEMUPGAME_API ASTUBaseWeapon : public AActor
 {
-	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	ASTUBaseWeapon();
+    GENERATED_BODY()
+
+public:
+    // Sets default values for this actor's properties
+    ASTUBaseWeapon();
+
+    virtual void Fire();
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-	USkeletalMeshComponent* WeaponMesh;
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+    USkeletalMeshComponent* WeaponMesh;
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    FName MuzzleSocketName = "MuzzleSocket";
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    float TraceMaxDistance = 1500.0f;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    float DamageAmount = 20.0f;
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
+    void MakeShot();
+    void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
+
+private:
+    APlayerController* GetPlayerController() const;
+    bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
+    bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
+    FVector GetMuzzleWorldLocation() const;
+    void MakeDamage(const FHitResult& HitResult);
 };
