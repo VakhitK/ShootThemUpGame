@@ -29,6 +29,10 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
     float DamageAmount = 20.0f;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+    float StrangeAngleValue = 90.0;
+
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
     void MakeShot();
@@ -40,4 +44,5 @@ private:
     bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
     FVector GetMuzzleWorldLocation() const;
     void MakeDamage(const FHitResult& HitResult);
+    bool StrangeAngleCheck(const FHitResult& HitResult) const;
 };

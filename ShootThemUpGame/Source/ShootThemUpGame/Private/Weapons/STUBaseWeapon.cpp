@@ -44,6 +44,8 @@ void ASTUBaseWeapon::MakeShot()
     FHitResult HitResult;
     MakeHit(HitResult, TraceStart, TraceEnd);
 
+    if (StrangeAngleCheck(HitResult)) return;
+
     if (HitResult.bBlockingHit)
     {
         MakeDamage(HitResult);
@@ -93,6 +95,7 @@ bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
     TraceStart = ViewLocation;
     const FVector ShootDirection = ViewRotation.Vector();
     TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
+
     return true;
 }
 
@@ -107,4 +110,17 @@ void ASTUBaseWeapon::MakeDamage(const FHitResult& HitResult)
     {
         HitActor->TakeDamage(DamageAmount, FDamageEvent{}, GetPlayerController(), this);
     }
+}
+
+bool ASTUBaseWeapon::StrangeAngleCheck(const FHitResult& HitResult) const
+{
+    const auto SocketTransform = WeaponMesh->GetSocketTransform(MuzzleSocketName);
+    const FVector ActualTraceEnd = HitResult.bBlockingHit ? HitResult.ImpactPoint : HitResult.TraceEnd;
+    const FVector HitDirectionFromMuzzle = (ActualTraceEnd - SocketTransform.GetLocation()).GetSafeNormal();
+    const float Degrees =
+        FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(SocketTransform.GetRotation().GetForwardVector(), HitDirectionFromMuzzle)));
+
+    UE_LOG(LogBaseWeapon, Display, TEXT("ShotAngle :%f"), Degrees);
+
+    return Degrees > StrangeAngleValue;
 }
