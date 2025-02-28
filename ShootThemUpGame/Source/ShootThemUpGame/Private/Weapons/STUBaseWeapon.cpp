@@ -24,6 +24,10 @@ void ASTUBaseWeapon::BeginPlay()
     Super::BeginPlay();
 
     check(WeaponMesh);
+    checkf(DefaultAmmo.Bullets > 0, TEXT("Bullets couldn't be less or equal 0!!!"));
+    checkf(DefaultAmmo.Clips > 0, TEXT("Clips couldn't be less or equal 0!!!"));
+
+    CurrentAmmo = DefaultAmmo;
 }
 
 void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const
@@ -63,6 +67,50 @@ bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRot
 
     Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
     return true;
+}
+
+void ASTUBaseWeapon::DecreaseAmmo()
+{
+    CurrentAmmo.Bullets--;
+    LogAmmo();
+
+    if (IsClipEmpty() && !IsAmmoEmpty())
+    {
+        StopFire();
+        OnClipEmpty.Broadcast();
+    }
+}
+void ASTUBaseWeapon::ChangeClip()
+{
+    if (!CurrentAmmo.Infinite)
+    {
+        if (CurrentAmmo.Clips == 0)
+        {
+            UE_LOG(LogBaseWeapon, Warning, TEXT("---------- Out of Clips!!! ----------"));
+            return;
+        }
+
+        CurrentAmmo.Clips--;
+    }
+    CurrentAmmo.Bullets = DefaultAmmo.Bullets;
+    UE_LOG(LogBaseWeapon, Display, TEXT("---------- Change Clip ----------"));
+}
+
+void ASTUBaseWeapon::LogAmmo()
+{
+    FString AmmoInfo = "Ammo : " + FString::FromInt(CurrentAmmo.Bullets) + " / ";
+    AmmoInfo += IsClipEmpty() ? "Infinite" : FString::FromInt(CurrentAmmo.Clips);
+    UE_LOG(LogBaseWeapon, Display, TEXT("%s"), *AmmoInfo);
+}
+
+bool ASTUBaseWeapon::IsAmmoEmpty() const
+{
+    return !CurrentAmmo.Infinite && CurrentAmmo.Clips == 0 && IsClipEmpty();
+}
+
+bool ASTUBaseWeapon::IsClipEmpty() const
+{
+    return CurrentAmmo.Bullets == 0;
 }
 
 FVector ASTUBaseWeapon::GetMuzzleWorldLocation() const

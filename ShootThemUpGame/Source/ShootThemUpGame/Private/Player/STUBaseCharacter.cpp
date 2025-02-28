@@ -73,9 +73,10 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::Jump);
     PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASTUBaseCharacter::SprintStart);
     PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASTUBaseCharacter::SprintStop);
-    PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USTUWeaponComponent::StartFire);
+    PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ASTUBaseCharacter::OnStartFire);
     PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &USTUWeaponComponent::StopFire);
     PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::NextWeapon);
+    PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Reload);
 }
 
 bool ASTUBaseCharacter::IsSprinting() const
@@ -119,6 +120,11 @@ void ASTUBaseCharacter::MoveForward(float Amount)
     {
         IsMovingForward = true;
         AddMovementInput(GetActorForwardVector(), Amount);
+
+        if (IsSprinting() && WeaponComponent->IsFiring())
+        {
+            WeaponComponent->StopFire();
+        }
     }
 }
 
@@ -133,6 +139,11 @@ void ASTUBaseCharacter::MoveRight(float Amount)
 void ASTUBaseCharacter::SprintStart()
 {
     WantsToSprint = true;
+
+    if (IsSprinting())
+    {
+        WeaponComponent->StopFire();
+    }
 }
 
 void ASTUBaseCharacter::SprintStop()
@@ -163,6 +174,12 @@ void ASTUBaseCharacter::OnHealthChanged(float Value) const
 {
     const auto HealthText = FText::FromString(FString::SanitizeFloat(Value, 0));
     HealthTextComponent->SetText(HealthText);
+}
+
+void ASTUBaseCharacter::OnStartFire()
+{
+    if (IsSprinting()) return;
+    WeaponComponent->StartFire();
 }
 
 void ASTUBaseCharacter::OnGroundLanded(const FHitResult& Hit)

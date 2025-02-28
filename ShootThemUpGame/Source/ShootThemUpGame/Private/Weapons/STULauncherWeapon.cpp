@@ -7,13 +7,13 @@ DEFINE_LOG_CATEGORY_STATIC(LogLauncherWeapon, All, All);
 
 void ASTULauncherWeapon::StartFire()
 {
+    Super::StartFire();
     MakeShot();
 }
-void ASTULauncherWeapon::StopFire() {}
 
 void ASTULauncherWeapon::MakeShot()
 {
-    if (auto&& World = GetWorld())
+    if (auto&& World = GetWorld(); !IsAmmoEmpty())
     {
         FVector TraceStart, TraceEnd;
         if (!GetTraceData(TraceStart, TraceEnd)) return;
@@ -34,5 +34,8 @@ void ASTULauncherWeapon::MakeShot()
             Projectile->SetOwner(GetOwner());
             Projectile->FinishSpawning(SpawnTransform);
         }
+
+        DecreaseAmmo();
+        StopFire();
     }
 }

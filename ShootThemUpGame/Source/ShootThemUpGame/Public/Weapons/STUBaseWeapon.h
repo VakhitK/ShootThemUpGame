@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "STUCoreTypes.h"
 #include "STUBaseWeapon.generated.h"
 
 UCLASS()
@@ -15,21 +16,29 @@ public:
     // Sets default values for this actor's properties
     ASTUBaseWeapon();
 
-    virtual void StartFire() {}
-    virtual void StopFire() {}
+    virtual void StartFire() { FireInProgress = true; }
+    virtual void StopFire() { FireInProgress = false; }
+    void ChangeClip();
+    bool CanReload() const { return (CurrentAmmo.Bullets < DefaultAmmo.Bullets) && CurrentAmmo.Clips > 0; }
+    bool IsFiring() const { return FireInProgress; }
+
+    FOnClipEmptySignature OnClipEmpty;
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
     USkeletalMeshComponent* WeaponMesh;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
     FName MuzzleSocketName = "MuzzleSocket";
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
     float TraceMaxDistance = 1500.0f;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
     float StrangeAngleValue = 90.0;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+    FAmmoData DefaultAmmo{15, 10, false};
 
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
@@ -41,4 +50,13 @@ protected:
     bool StrangeAngleCheck(const FHitResult& HitResult) const;
     APlayerController* GetPlayerController() const;
     bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
+
+    void DecreaseAmmo();
+    void LogAmmo();
+    bool IsAmmoEmpty() const;
+    bool IsClipEmpty() const;
+
+private:
+    FAmmoData CurrentAmmo;
+    bool FireInProgress = false;
 };

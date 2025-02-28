@@ -72,6 +72,7 @@ private:
     void SprintStop();
     void OnDeath();
     void OnHealthChanged(float Value) const;
+    void OnStartFire();
 
     UFUNCTION()
     void OnGroundLanded(const FHitResult& Hit);

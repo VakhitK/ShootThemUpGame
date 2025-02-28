@@ -15,7 +15,6 @@ class SHOOTTHEMUPGAME_API ASTULauncherWeapon : public ASTUBaseWeapon
 
 public:
     virtual void StartFire() override;
-    virtual void StopFire() override;
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
