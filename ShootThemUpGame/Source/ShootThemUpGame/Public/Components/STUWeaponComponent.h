@@ -23,6 +23,7 @@ public:
     void Reload();
 
     bool IsFiring() const { return CurrentWeapon && CurrentWeapon->IsFiring(); }
+    bool GetCurrentWeaponUIData(FWeaponUIData& UIData) const;
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Weapon")

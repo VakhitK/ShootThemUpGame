@@ -7,7 +7,7 @@
 void ASTUGameHUD::DrawHUD()
 {
     Super::DrawHUD();
-    DrawCrossHair();
+    // DrawCrossHair();
 }
 
 void ASTUGameHUD::BeginPlay()
@@ -20,7 +20,7 @@ void ASTUGameHUD::BeginPlay()
     }
 }
 
-void ASTUGameHUD::DrawCrossHair()
+void ASTUGameHUD::DrawDebugCrossHair()
 {
     const TInterval<float> Center(Canvas->SizeX * 0.5f, Canvas->SizeY * 0.5f);
     const float HalfLineSize = 10.0f;

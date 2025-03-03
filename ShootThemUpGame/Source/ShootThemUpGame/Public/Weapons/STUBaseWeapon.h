@@ -21,6 +21,7 @@ public:
     void ChangeClip();
     bool CanReload() const { return (CurrentAmmo.Bullets < DefaultAmmo.Bullets) && CurrentAmmo.Clips > 0; }
     bool IsFiring() const { return FireInProgress; }
+    FWeaponUIData GetUIData() const { return UIData; }
 
     FOnClipEmptySignature OnClipEmpty;
 
@@ -39,6 +40,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
     FAmmoData DefaultAmmo{15, 10, false};
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+    FWeaponUIData UIData;
 
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
