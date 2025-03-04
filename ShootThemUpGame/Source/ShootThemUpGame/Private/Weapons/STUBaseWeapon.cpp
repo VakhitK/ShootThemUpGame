@@ -24,8 +24,8 @@ void ASTUBaseWeapon::BeginPlay()
     Super::BeginPlay();
 
     check(WeaponMesh);
-    check(UIData.MainIcon, TEXT("Main icon for weapon not set!"));
-    check(UIData.CrossHairIcon, TEXT("Crosshair for weapon not set!"));
+    checkf(UIData.MainIcon, TEXT("Main icon for weapon not set!"));
+    checkf(UIData.CrossHairIcon, TEXT("Crosshair for weapon not set!"));
     checkf(DefaultAmmo.Bullets > 0, TEXT("Bullets couldn't be less or equal 0!"));
     checkf(DefaultAmmo.Clips > 0, TEXT("Clips couldn't be less or equal 0!"));
 
@@ -74,7 +74,6 @@ bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRot
 void ASTUBaseWeapon::DecreaseAmmo()
 {
     CurrentAmmo.Bullets--;
-    LogAmmo();
 
     if (IsClipEmpty() && !IsAmmoEmpty())
     {

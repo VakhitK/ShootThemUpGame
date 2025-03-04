@@ -22,6 +22,7 @@ public:
     bool CanReload() const { return (CurrentAmmo.Bullets < DefaultAmmo.Bullets) && CurrentAmmo.Clips > 0; }
     bool IsFiring() const { return FireInProgress; }
     FWeaponUIData GetUIData() const { return UIData; }
+    FAmmoData GetAmmoData() const { return CurrentAmmo; }
 
     FOnClipEmptySignature OnClipEmpty;
 

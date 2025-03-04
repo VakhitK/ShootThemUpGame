@@ -24,6 +24,7 @@ public:
 
     bool IsFiring() const { return CurrentWeapon && CurrentWeapon->IsFiring(); }
     bool GetCurrentWeaponUIData(FWeaponUIData& UIData) const;
+    bool GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const;
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Weapon")
