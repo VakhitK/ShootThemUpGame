@@ -25,6 +25,7 @@ public:
     bool IsFiring() const { return CurrentWeapon && CurrentWeapon->IsFiring(); }
     bool GetCurrentWeaponUIData(FWeaponUIData& UIData) const;
     bool GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const;
+    bool TryToAddAmmo(const TSubclassOf<ASTUBaseWeapon>& WeaponType, int32 ClipsAmount);
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Weapon")
@@ -56,7 +57,7 @@ private:
     void OnEquipFinished(USkeletalMeshComponent* MeshComp);
     void OnReloadFinished(USkeletalMeshComponent* MeshComp);
 
-    void OnEmptyClip();
+    void OnEmptyClip(ASTUBaseWeapon* AmmoEmptyWeapon);
     void ChangeClip();
 
     UPROPERTY()

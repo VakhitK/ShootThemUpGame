@@ -16,6 +16,8 @@ public:
     USTUHealthComponent();
 
     float GetHealth() const { return Health; }
+    bool IsHealthFull() const { return FMath::IsNearlyEqual(Health, MaxHealth); }
+    bool TryToAddHealth(float HealthAmount);
 
     UFUNCTION(BlueprintCallable, Category = "Health")
     bool IsDead() const { return FMath::IsNearlyZero(Health); }

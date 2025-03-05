@@ -23,6 +23,7 @@ public:
     bool IsFiring() const { return FireInProgress; }
     FWeaponUIData GetUIData() const { return UIData; }
     FAmmoData GetAmmoData() const { return CurrentAmmo; }
+    bool TryToAddAmmo(int32 ClipsAmount);
 
     FOnClipEmptySignature OnClipEmpty;
 
@@ -60,6 +61,7 @@ protected:
     void LogAmmo();
     bool IsAmmoEmpty() const;
     bool IsClipEmpty() const;
+    bool IsAmmoFull() const;
 
 private:
     FAmmoData CurrentAmmo;
