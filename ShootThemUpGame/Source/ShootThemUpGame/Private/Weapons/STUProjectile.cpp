@@ -4,6 +4,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "DrawDebugHelpers.h"
+#include "STUWeaponFXComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -16,11 +17,14 @@ ASTUProjectile::ASTUProjectile()
     CollisionComponent->InitSphereRadius(5.0f);
     CollisionComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
     CollisionComponent->SetCollisionResponseToAllChannels(ECR_Block);
+    CollisionComponent->bReturnMaterialOnMove = true;
     SetRootComponent(CollisionComponent);
 
     MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
     MovementComponent->InitialSpeed = 2000.0f;
     MovementComponent->ProjectileGravityScale = 0.0f;
+
+    WeaponFXComponent = CreateDefaultSubobject<USTUWeaponFXComponent>("WeaponFXComponent");
 }
 
 // Called when the game starts or when spawned
@@ -30,6 +34,7 @@ void ASTUProjectile::BeginPlay()
 
     check(CollisionComponent);
     check(MovementComponent);
+    check(WeaponFXComponent);
 
     MovementComponent->Velocity = ShotDirection * MovementComponent->InitialSpeed;
     CollisionComponent->IgnoreActorWhenMoving(GetOwner(), true);
@@ -55,7 +60,8 @@ void ASTUProjectile::OnProjectileHit(
             GetController(),                       //
             DoFullDamage);
 
-        DrawDebugSphere(World, GetActorLocation(), DamageRadius, 32, FColor::Cyan, false, 5.0f);
+        // DrawDebugSphere(World, GetActorLocation(), DamageRadius, 32, FColor::Cyan, false, 5.0f);
+        WeaponFXComponent->PlayImpactFX(Hit);
         Destroy();
     }
 }

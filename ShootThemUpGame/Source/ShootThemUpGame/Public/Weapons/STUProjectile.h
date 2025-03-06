@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "STUProjectile.generated.h"
 
+class USTUWeaponFXComponent;
 class USphereComponent;
 class UProjectileMovementComponent;
 
@@ -41,6 +42,9 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
     float LifeSeconds = 5.0f;
+
+    UPROPERTY(VisibleAnywhere, Category = "VFX")
+    USTUWeaponFXComponent* WeaponFXComponent;
 
 private:
     UFUNCTION()

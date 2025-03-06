@@ -1,9 +1,23 @@
 // Shoot Them Up Game. All Rights Reserved.
 
 #include "Weapons/STURifleWeapon.h"
+
+#include "STUWeaponFXComponent.h"
 #include "Engine/DamageEvents.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRifleWeapon, All, All);
+
+ASTURifleWeapon::ASTURifleWeapon()
+{
+    WeaponFXComponent = CreateDefaultSubobject<USTUWeaponFXComponent>("WeaponFXComponent");
+}
+
+void ASTURifleWeapon::BeginPlay()
+{
+    Super::BeginPlay();
+
+    check(WeaponFXComponent);
+}
 
 void ASTURifleWeapon::StartFire()
 {
@@ -40,15 +54,15 @@ void ASTURifleWeapon::MakeShot()
     if (HitResult.bBlockingHit)
     {
         MakeDamage(HitResult);
-        DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3);
+        /*DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3);
         DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 32, FColor::Red, false, 5.0f);
-
-        UE_LOG(LogRifleWeapon, Display, TEXT("Bone :%s"), *HitResult.BoneName.ToString());
+        UE_LOG(LogRifleWeapon, Display, TEXT("Bone :%s"), *HitResult.BoneName.ToString());*/
+        WeaponFXComponent->PlayImpactFX(HitResult);
     }
-    else
+    /*else
     {
         DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), TraceEnd, FColor::Red, false, 3.0f, 0, 3);
-    }
+    }*/
 
     DecreaseAmmo();
 }
