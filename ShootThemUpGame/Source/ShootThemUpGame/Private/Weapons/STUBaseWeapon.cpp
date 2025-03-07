@@ -5,6 +5,8 @@
 #include "GameFramework/Controller.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
 
@@ -148,6 +150,17 @@ bool ASTUBaseWeapon::IsClipEmpty() const
 bool ASTUBaseWeapon::IsAmmoFull() const
 {
     return CurrentAmmo.Clips == DefaultAmmo.Clips && CurrentAmmo.Bullets == DefaultAmmo.Bullets;
+}
+
+UNiagaraComponent* ASTUBaseWeapon::SpawnMuzzleFX() const
+{
+    return UNiagaraFunctionLibrary::SpawnSystemAttached(MuzzleFX,  //
+        WeaponMesh,                                                //
+        MuzzleSocketName,                                          //
+        FVector::ZeroVector,                                       //
+        FRotator::ZeroRotator,                                     //
+        EAttachLocation::SnapToTarget,                             //
+        true);
 }
 
 FVector ASTUBaseWeapon::GetMuzzleWorldLocation() const

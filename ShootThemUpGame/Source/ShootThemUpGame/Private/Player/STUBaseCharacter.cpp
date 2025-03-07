@@ -174,7 +174,7 @@ void ASTUBaseCharacter::OnDeath()
     GetMesh()->SetSimulatePhysics(true);
 }
 
-void ASTUBaseCharacter::OnHealthChanged(float Value) const
+void ASTUBaseCharacter::OnHealthChanged(float Value, float Delta) const
 {
     const auto HealthText = FText::FromString(FString::SanitizeFloat(Value, 0));
     HealthTextComponent->SetText(HealthText);

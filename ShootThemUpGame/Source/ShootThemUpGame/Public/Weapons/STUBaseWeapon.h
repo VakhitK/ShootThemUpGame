@@ -7,6 +7,9 @@
 #include "STUCoreTypes.h"
 #include "STUBaseWeapon.generated.h"
 
+class UNiagaraSystem;
+class UNiagaraComponent;
+
 UCLASS()
 class SHOOTTHEMUPGAME_API ASTUBaseWeapon : public AActor
 {
@@ -46,6 +49,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     FWeaponUIData UIData;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+    UNiagaraSystem* MuzzleFX;
+
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
     virtual void MakeShot() {}
@@ -62,6 +68,8 @@ protected:
     bool IsAmmoEmpty() const;
     bool IsClipEmpty() const;
     bool IsAmmoFull() const;
+
+    UNiagaraComponent* SpawnMuzzleFX() const;
 
 private:
     FAmmoData CurrentAmmo;

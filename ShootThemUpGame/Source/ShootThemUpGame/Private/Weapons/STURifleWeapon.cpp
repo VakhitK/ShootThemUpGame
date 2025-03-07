@@ -2,6 +2,7 @@
 
 #include "Weapons/STURifleWeapon.h"
 
+#include "NiagaraComponent.h"
 #include "STUWeaponFXComponent.h"
 #include "Engine/DamageEvents.h"
 
@@ -22,13 +23,17 @@ void ASTURifleWeapon::BeginPlay()
 void ASTURifleWeapon::StartFire()
 {
     Super::StartFire();
+
+    InitMuzzleFX();
     GetWorldTimerManager().SetTimer(ShotTimerHandle, this, &ASTURifleWeapon::MakeShot, TimeBetweenShots, true);
     MakeShot();
 }
 void ASTURifleWeapon::StopFire()
 {
     Super::StopFire();
+
     GetWorldTimerManager().ClearTimer(ShotTimerHandle);
+    SetMuzzleFXVisibility(false);
 }
 
 void ASTURifleWeapon::MakeShot()
@@ -86,5 +91,24 @@ void ASTURifleWeapon::MakeDamage(const FHitResult& HitResult)
     if (auto&& HitActor = HitResult.GetActor())
     {
         HitActor->TakeDamage(DamageAmount, FDamageEvent{}, GetPlayerController(), this);
+    }
+}
+
+void ASTURifleWeapon::InitMuzzleFX()
+{
+    if (!MuzzleFXComponent)
+    {
+        MuzzleFXComponent = SpawnMuzzleFX();
+    }
+    SetMuzzleFXVisibility(true);
+}
+
+void ASTURifleWeapon::SetMuzzleFXVisibility(bool Visible) const
+{
+    if (MuzzleFXComponent)
+    {
+
+        MuzzleFXComponent->SetPaused(!Visible);
+        MuzzleFXComponent->SetVisibility(Visible, true);
     }
 }

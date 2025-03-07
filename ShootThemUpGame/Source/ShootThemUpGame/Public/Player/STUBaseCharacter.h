@@ -71,7 +71,7 @@ private:
     void SprintStart();
     void SprintStop();
     void OnDeath();
-    void OnHealthChanged(float Value) const;
+    void OnHealthChanged(float Value, float Delta = 0.0f) const;
     void OnStartFire();
 
     UFUNCTION()
