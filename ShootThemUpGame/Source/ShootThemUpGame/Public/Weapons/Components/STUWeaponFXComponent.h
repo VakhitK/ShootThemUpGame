@@ -4,9 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "STUCoreTypes.h"
 #include "STUWeaponFXComponent.generated.h"
-
-class UNiagaraSystem;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SHOOTTHEMUPGAME_API USTUWeaponFXComponent : public UActorComponent
@@ -22,8 +21,8 @@ protected:
     virtual void BeginPlay() override;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
-    UNiagaraSystem* DefaultEffect;
+    FImpactData DefaultImpactData;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
-    TMap<UPhysicalMaterial*, UNiagaraSystem*> EffectsMap;
+    TMap<UPhysicalMaterial*, FImpactData> ImpactDataMap;
 };
