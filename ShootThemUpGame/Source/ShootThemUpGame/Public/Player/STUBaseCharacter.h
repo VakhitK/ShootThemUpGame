@@ -65,12 +65,14 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Movement")
     float GetMovementDirection() const;
 
+protected:
+    virtual void OnDeath();
+
 private:
     void MoveForward(float Amount);
     void MoveRight(float Amount);
     void SprintStart();
     void SprintStop();
-    void OnDeath();
     void OnHealthChanged(float Value, float Delta = 0.0f) const;
     void OnStartFire();
 

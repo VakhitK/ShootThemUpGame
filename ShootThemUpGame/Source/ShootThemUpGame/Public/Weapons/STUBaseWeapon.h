@@ -22,6 +22,7 @@ public:
     virtual void StartFire() { FireInProgress = true; }
     virtual void StopFire() { FireInProgress = false; }
     void ChangeClip();
+    bool IsAmmoEmpty() const;
     bool CanReload() const { return (CurrentAmmo.Bullets < DefaultAmmo.Bullets) && CurrentAmmo.Clips > 0; }
     bool IsFiring() const { return FireInProgress; }
     FWeaponUIData GetUIData() const { return UIData; }
@@ -65,7 +66,6 @@ protected:
 
     void DecreaseAmmo();
     void LogAmmo();
-    bool IsAmmoEmpty() const;
     bool IsClipEmpty() const;
     bool IsAmmoFull() const;
 

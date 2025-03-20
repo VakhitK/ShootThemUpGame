@@ -17,9 +17,9 @@ public:
     // Sets default values for this component's properties
     USTUWeaponComponent();
 
-    void StartFire();
+    virtual void StartFire();
     void StopFire();
-    void NextWeapon();
+    virtual void NextWeapon();
     void Reload();
 
     bool IsFiring() const { return CurrentWeapon && CurrentWeapon->IsFiring(); }
@@ -40,16 +40,24 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Animation")
     UAnimMontage* EquipAnimMontage;
 
+    UPROPERTY()
+    ASTUBaseWeapon* CurrentWeapon = nullptr;
+
+    UPROPERTY()
+    TArray<ASTUBaseWeapon*> Weapons;
+
     // Called when the game starts
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+    bool CanFire() const { return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress; }
+    bool CanEquip() const { return !EquipAnimInProgress && !ReloadAnimInProgress; }
+    void EquipWeapon(int32 WeaponIndex);
+
+    int32 CurrentWeaponIndex = 0;
 
 private:
     void SpawnWeapons();
     void AttachWeaponToSocket(ASTUBaseWeapon* Weapon, USceneComponent* Mesh, const FName& SocketName);
-    void EquipWeapon(int32 WeaponIndex);
-    bool CanFire() const { return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress; }
-    bool CanEquip() const { return !EquipAnimInProgress && !ReloadAnimInProgress; }
     bool CanReload() const { return CurrentWeapon && CurrentWeapon->CanReload() && !ReloadAnimInProgress && !EquipAnimInProgress; }
 
     void PlayAnimMontage(UAnimMontage* Animation);
@@ -61,15 +69,8 @@ private:
     void ChangeClip();
 
     UPROPERTY()
-    ASTUBaseWeapon* CurrentWeapon = nullptr;
-
-    UPROPERTY()
     UAnimMontage* CurrentReloadAnimMontage = nullptr;
 
-    UPROPERTY()
-    TArray<ASTUBaseWeapon*> Weapons;
-
-    int32 CurrentWeaponIndex = 0;
     bool EquipAnimInProgress = false;
     bool ReloadAnimInProgress = false;
 };
