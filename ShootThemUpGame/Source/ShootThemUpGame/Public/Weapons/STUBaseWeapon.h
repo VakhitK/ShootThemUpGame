@@ -23,6 +23,7 @@ public:
     virtual void StopFire() { FireInProgress = false; }
     void ChangeClip();
     bool IsAmmoEmpty() const;
+    bool IsAmmoFull() const;
     bool CanReload() const { return (CurrentAmmo.Bullets < DefaultAmmo.Bullets) && CurrentAmmo.Clips > 0; }
     bool IsFiring() const { return FireInProgress; }
     FWeaponUIData GetUIData() const { return UIData; }
@@ -67,7 +68,6 @@ protected:
     void DecreaseAmmo();
     void LogAmmo();
     bool IsClipEmpty() const;
-    bool IsAmmoFull() const;
 
     UNiagaraComponent* SpawnMuzzleFX() const;
 

@@ -47,7 +47,6 @@ void ASTUBasePickup::PickupWasTaken()
         GetRootComponent()->SetVisibility(false, true);
     }
 
-    FTimerHandle RespawnTimerHandle;
     GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ASTUBasePickup::Respawn, RespawnTime);
 }
 

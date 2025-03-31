@@ -28,6 +28,7 @@ protected:
 
 public:
     virtual void Tick(float DeltaTime) override;
+    bool CouldBeTaken() const { return !GetWorldTimerManager().IsTimerActive(RespawnTimerHandle); }
 
 private:
     virtual bool GivePickupTo(const APawn* Pawn) { return false; }
@@ -36,4 +37,5 @@ private:
     void GenerateRotationYaw();
 
     float RotationYaw = 0.0f;
+    FTimerHandle RespawnTimerHandle;
 };
