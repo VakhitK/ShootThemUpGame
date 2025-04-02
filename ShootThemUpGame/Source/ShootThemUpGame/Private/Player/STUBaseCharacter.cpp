@@ -80,6 +80,16 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Reload);
 }
 
+void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& color) const
+{
+    if (!GetMesh()) return;
+
+    const auto DynamicMaterial = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
+    if (!DynamicMaterial) return;
+
+    DynamicMaterial->SetVectorParameterValue(MaterialColorName, color);
+}
+
 bool ASTUBaseCharacter::IsSprinting() const
 {
     return WantsToSprint && IsMovingForward && !GetVelocity().IsZero();

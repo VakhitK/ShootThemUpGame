@@ -36,6 +36,9 @@ private:
     void RespawnPlayer(AController* Controller);
     void StartRound();
     void GameTimerUpdate();
+    void CreateTeamsInfo();
+    FLinearColor DetermineColorByTeamID(int32 TeamID) const;
+    static void SetPlayerColor(const AController* Controller);
 
     int32 CurrentRound = 1;
     int32 RoundCountDown = 0;
