@@ -20,6 +20,14 @@ public:
     virtual void StartPlay() override;
     virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 
+    void Killed(const AController* KillerController, const AController* VictimController) const;
+
+    FGameData GetGameData() { return GameData; }
+    int32 GetCurrentRound() const { return CurrentRound; }
+    int32 GetRoundSecondsRemaining() const { return RoundCountDown; }
+
+    void RespawnRequest(AController* Controller);
+
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Game")
     TSubclassOf<AAIController> AIControllerClass;
@@ -36,9 +44,13 @@ private:
     void RespawnPlayer(AController* Controller);
     void StartRound();
     void GameTimerUpdate();
-    void CreateTeamsInfo();
+    void CreateTeamsInfo() const;
     FLinearColor DetermineColorByTeamID(int32 TeamID) const;
     static void SetPlayerColor(const AController* Controller);
+    void StartRespawn(const AController* Controller) const;
+    void GameOver() const;
+
+    void LogPlayerInfo() const;
 
     int32 CurrentRound = 1;
     int32 RoundCountDown = 0;

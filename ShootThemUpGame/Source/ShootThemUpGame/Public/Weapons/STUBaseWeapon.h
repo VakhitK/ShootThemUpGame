@@ -62,7 +62,7 @@ protected:
     void MakeHit(FHitResult& HitResult, const FVector& TraceStart, const FVector& TraceEnd) const;
     FVector GetMuzzleWorldLocation() const;
     bool StrangeAngleCheck(const FHitResult& HitResult) const;
-    APlayerController* GetPlayerController() const;
+    AController* GetController() const;
     bool GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const;
 
     void DecreaseAmmo();

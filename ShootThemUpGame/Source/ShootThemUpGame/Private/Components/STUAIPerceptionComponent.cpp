@@ -24,8 +24,8 @@ AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
     for (const auto& Actor : PerceivedActors)
     {
         const auto HealthComponent = STUUtils::GetComponent<USTUHealthComponent>(Actor);
-        const auto PercievePawn = Cast<AAIController>(Actor);
-        const auto AreEnemies = PercievePawn && STUUtils::AreEnemies(Controller, PercievePawn);
+        const auto PercievePawn = Cast<APawn>(Actor);
+        const auto AreEnemies = PercievePawn && STUUtils::AreEnemies(Controller, PercievePawn->Controller);
 
         if (HealthComponent && !HealthComponent->IsDead() && AreEnemies)
         {

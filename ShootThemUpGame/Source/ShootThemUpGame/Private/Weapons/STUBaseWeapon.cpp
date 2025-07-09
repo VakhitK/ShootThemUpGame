@@ -57,12 +57,10 @@ bool ASTUBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
     return true;
 }
 
-APlayerController* ASTUBaseWeapon::GetPlayerController() const
+AController* ASTUBaseWeapon::GetController() const
 {
-    const auto Player = Cast<ACharacter>(GetOwner());
-    if (!Player) return nullptr;
-
-    return Player->GetController<APlayerController>();
+    const auto Pawn = Cast<APawn>(GetOwner());
+    return Pawn ? Pawn->GetController() : nullptr;
 }
 
 bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRotation) const
@@ -72,7 +70,7 @@ bool ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewLocation, FRotator& ViewRot
 
     if (Player->IsPlayerControlled())
     {
-        const auto Controller = GetPlayerController();
+        const auto Controller = Player->GetController<APlayerController>();
         if (!Controller) return false;
 
         Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
@@ -109,7 +107,7 @@ void ASTUBaseWeapon::ChangeClip()
         CurrentAmmo.Clips--;
     }
     CurrentAmmo.Bullets = DefaultAmmo.Bullets;
-    //UE_LOG(LogBaseWeapon, Display, TEXT("---------- Change Clip ----------"));
+    // UE_LOG(LogBaseWeapon, Display, TEXT("---------- Change Clip ----------"));
 }
 
 bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)

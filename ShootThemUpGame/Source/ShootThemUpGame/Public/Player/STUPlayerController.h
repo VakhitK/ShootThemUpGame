@@ -6,12 +6,19 @@
 #include "GameFramework/PlayerController.h"
 #include "STUPlayerController.generated.h"
 
-/**
- * 
- */
+class USTURespawnComponent;
+
 UCLASS()
 class SHOOTTHEMUPGAME_API ASTUPlayerController : public APlayerController
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
+public:
+    ASTUPlayerController();
+
+protected:
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+    USTURespawnComponent* STURespawnComponent;
+
+    virtual void OnPossess(APawn* InPawn) override;
 };

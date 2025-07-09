@@ -7,8 +7,13 @@
 #include "Player/STUPlayerController.h"
 #include "Player/STUPlayerState.h"
 #include "UI/STUGameHUD.h"
+#include "STUUtils.h"
+#include "Components/STURespawnComponent.h"
+#include "EngineUtils.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSTUGameModeBase, All, All)
+
+constexpr static int32 MinRoundTimeForRespawn = 10;
 
 ASTUGameModeBase::ASTUGameModeBase()
 {
@@ -37,6 +42,29 @@ UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AContr
     }
 
     return Super::GetDefaultPawnClassForController_Implementation(InController);
+}
+
+void ASTUGameModeBase::Killed(const AController* KillerController, const AController* VictimController) const
+{
+    const auto KillerPlayerState = KillerController ? Cast<ASTUPlayerState>(KillerController->PlayerState) : nullptr;
+    const auto VictimPlayerState = VictimController ? Cast<ASTUPlayerState>(VictimController->PlayerState) : nullptr;
+
+    if (KillerPlayerState)
+    {
+        KillerPlayerState->AddKill();
+    }
+
+    if (VictimPlayerState)
+    {
+        VictimPlayerState->AddDeath();
+    }
+
+    StartRespawn(VictimController);
+}
+
+void ASTUGameModeBase::RespawnRequest(AController* Controller)
+{
+    RespawnPlayer(Controller);
 }
 
 void ASTUGameModeBase::SpawnBots()
@@ -106,12 +134,12 @@ void ASTUGameModeBase::GameTimerUpdate()
         }
         else
         {
-            UE_LOG(LogSTUGameModeBase, Display, TEXT("Game over!"));
+            GameOver();
         }
     }
 }
 
-void ASTUGameModeBase::CreateTeamsInfo()
+void ASTUGameModeBase::CreateTeamsInfo() const
 {
     UWorld* World = GetWorld();
     if (!World) return;
@@ -155,5 +183,52 @@ void ASTUGameModeBase::SetPlayerColor(const AController* Controller)
     {
 
         Character->SetPlayerColor(PlayerState->GetTeamColor());
+    }
+}
+
+void ASTUGameModeBase::StartRespawn(const AController* Controller) const
+{
+    const bool CanRespawn = RoundCountDown > MinRoundTimeForRespawn + GameData.RespawnTime;
+    // Additional check for extra respawns
+    if (!CanRespawn)
+    {
+        return;
+    }
+
+    if (auto&& RespawnComponent = STUUtils::GetComponent<USTURespawnComponent>(Controller))
+    {
+        RespawnComponent->Respawn(GameData.RespawnTime);
+    }
+}
+
+void ASTUGameModeBase::GameOver() const
+{
+    UE_LOG(LogSTUGameModeBase, Display, TEXT("Game over!"));
+    LogPlayerInfo();
+
+    for (const auto Pawn : TActorRange<APawn>(GetWorld()))
+    {
+        if (Pawn)
+        {
+            Pawn->TurnOff();
+            Pawn->DisableInput(nullptr);
+        }
+    }
+}
+
+void ASTUGameModeBase::LogPlayerInfo() const
+{
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    for (FConstControllerIterator It = World->GetControllerIterator(); It; ++It)
+    {
+        const auto Controller = It->Get();
+        if (!Controller) continue;
+
+        const auto PlayerState = Cast<ASTUPlayerState>(Controller->PlayerState);
+        if (!PlayerState) continue;
+
+        PlayerState->LogInfo();
     }
 }

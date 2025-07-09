@@ -87,7 +87,7 @@ void ASTURifleWeapon::MakeDamage(const FHitResult& HitResult)
 {
     if (auto&& HitActor = HitResult.GetActor())
     {
-        HitActor->TakeDamage(DamageAmount, FDamageEvent{}, GetPlayerController(), this);
+        HitActor->TakeDamage(DamageAmount, FDamageEvent{}, GetController(), this);
     }
 }
 
