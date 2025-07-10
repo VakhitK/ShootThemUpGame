@@ -19,6 +19,8 @@ public:
 
     virtual void StartPlay() override;
     virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+    virtual bool SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate = FCanUnpause()) override;
+    virtual bool ClearPause() override;
 
     void Killed(const AController* KillerController, const AController* VictimController) const;
 
@@ -27,6 +29,8 @@ public:
     int32 GetRoundSecondsRemaining() const { return RoundCountDown; }
 
     void RespawnRequest(AController* Controller);
+
+    FOnMatchStateChangedSignature OnMatchStateChanged;
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Game")
@@ -48,11 +52,12 @@ private:
     FLinearColor DetermineColorByTeamID(int32 TeamID) const;
     static void SetPlayerColor(const AController* Controller);
     void StartRespawn(const AController* Controller) const;
-    void GameOver() const;
-
+    void GameOver();
+    void SetMatchState(ESTUMatchState State);
     void LogPlayerInfo() const;
 
     int32 CurrentRound = 1;
     int32 RoundCountDown = 0;
     FTimerHandle GameRoundTimerHandle;
+    ESTUMatchState MatchState = ESTUMatchState::WaitingToStart;
 };

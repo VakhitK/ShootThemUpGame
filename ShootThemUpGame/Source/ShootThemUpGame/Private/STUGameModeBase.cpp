@@ -32,6 +32,7 @@ void ASTUGameModeBase::StartPlay()
 
     CurrentRound = 1;
     StartRound();
+    SetMatchState(ESTUMatchState::InProgress);
 }
 
 UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
@@ -42,6 +43,28 @@ UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AContr
     }
 
     return Super::GetDefaultPawnClassForController_Implementation(InController);
+}
+
+bool ASTUGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate)
+{
+    const auto PauseSet = Super::SetPause(PC, CanUnpauseDelegate);
+    if (PauseSet)
+    {
+        SetMatchState(ESTUMatchState::Pause);
+    }
+
+    return PauseSet;
+}
+
+bool ASTUGameModeBase::ClearPause()
+{
+    const auto PauseCleared = Super::ClearPause();
+    if (PauseCleared)
+    {
+        SetMatchState(ESTUMatchState::InProgress);
+    }
+
+    return PauseCleared;
 }
 
 void ASTUGameModeBase::Killed(const AController* KillerController, const AController* VictimController) const
@@ -201,7 +224,7 @@ void ASTUGameModeBase::StartRespawn(const AController* Controller) const
     }
 }
 
-void ASTUGameModeBase::GameOver() const
+void ASTUGameModeBase::GameOver()
 {
     UE_LOG(LogSTUGameModeBase, Display, TEXT("Game over!"));
     LogPlayerInfo();
@@ -214,6 +237,16 @@ void ASTUGameModeBase::GameOver() const
             Pawn->DisableInput(nullptr);
         }
     }
+
+    SetMatchState(ESTUMatchState::GameOver);
+}
+
+void ASTUGameModeBase::SetMatchState(ESTUMatchState State)
+{
+    if (MatchState == State) return;
+
+    MatchState = State;
+    OnMatchStateChanged.Broadcast(MatchState);
 }
 
 void ASTUGameModeBase::LogPlayerInfo() const
