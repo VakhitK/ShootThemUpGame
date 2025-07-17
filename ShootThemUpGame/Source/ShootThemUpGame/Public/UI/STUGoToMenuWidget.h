@@ -4,22 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "STUPauseWidget.generated.h"
+#include "STUGoToMenuWidget.generated.h"
 
 class UButton;
 
 UCLASS()
-class SHOOTTHEMUPGAME_API USTUPauseWidget : public UUserWidget
+class SHOOTTHEMUPGAME_API USTUGoToMenuWidget : public UUserWidget
 {
     GENERATED_BODY()
 
 protected:
     UPROPERTY(meta = (BindWidget))
-    UButton* ContinueButton;
+    UButton* GoToMenuButton;
 
     virtual void NativeOnInitialized() override;
 
 private:
     UFUNCTION()
-    void OnClearPause();
+    void OnGoToMenu();
 };
