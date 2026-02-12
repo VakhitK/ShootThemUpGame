@@ -56,10 +56,10 @@ public:
     float GetMovementDirection() const;
 
 protected:
+    virtual void OnHealthChanged(float Health, float HealthDelta = 0.0f) {}
     virtual void OnDeath();
 
 private:
-    void OnHealthChanged(float Value, float Delta = 0.0f) const;
     void OnStartFire();
 
     UFUNCTION()

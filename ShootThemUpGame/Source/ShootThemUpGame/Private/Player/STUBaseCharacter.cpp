@@ -100,8 +100,6 @@ void ASTUBaseCharacter::OnDeath()
     GetMesh()->SetSimulatePhysics(true);
 }
 
-void ASTUBaseCharacter::OnHealthChanged(float Value, float Delta) const {}
-
 void ASTUBaseCharacter::OnStartFire()
 {
     if (IsSprinting()) return;

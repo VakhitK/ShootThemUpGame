@@ -20,6 +20,7 @@ public:
     void SetDeaths(const FText& Text) const;
     void SetTeam(const FText& Text) const;
     void SetPlayerIndicatorVisibility(bool Visible) const;
+    void SetTeamColor(const FLinearColor& Color) const;
 
 protected:
     UPROPERTY(meta = (BindWidget))
@@ -36,4 +37,7 @@ protected:
 
     UPROPERTY(meta = (BindWidget))
     UImage* PlayerIndicatorImage;
+
+    UPROPERTY(meta = (BindWidget))
+    UImage* TeamImage;
 };
