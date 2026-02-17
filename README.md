@@ -1,4 +1,10 @@
 # ShootThemUpGame
-For educational purposes only.
-Source files for the test project (3rd person shooter). Made on Unreal Engine.
-https://www.udemy.com/course/unrealengine
+
+**ShootThemUpGame** is a third-person shooter mechanics with AI, UI, and interactive environments.
+
+## Features
+- Third-person character with movement and shooting  
+- AI enemies with perception and behavior trees  
+- Health and ammo UI (UMG)  
+- Visual effects (Niagara) and sound management  
+- Dynamic level streaming and collision handling 
